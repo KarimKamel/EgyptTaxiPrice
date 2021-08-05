@@ -1,0 +1,18 @@
+{
+    "title":"Taxi fare prices in Egypt?",
+    "subtitle":"Enter departure and arrival locations and press submit",
+    "from":"from",
+    "origin":"origin",
+    "to":"to",
+    "destination":"destination",
+    "departure time":"departure time (optional)",
+    "asterisk message":"*used to calculate time in traffic. Defaults to current time.",
+    "submit":"submit",
+    "searchErrorMessage" :
+    "Could not find location; try another search term.", 
+   "routeErrorMessage" :
+    "Could not find a path connecting origin and destination", 
+   "departureTimeErrorMessage" :
+    "Error in specified time. Departure time cannot be in the past" 
+
+}
