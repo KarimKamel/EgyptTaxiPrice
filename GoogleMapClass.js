@@ -19,12 +19,16 @@ export default class GoogleMap {
     this.map = map;
   }
 
-  getTripData = async (originName, destinationName) => {
+  getTripData = async (originName, destinationName, departureTime) => {
     console.log('in trip data');
     //if departure time has been changed by the user it will be returned in string format
     //if so, create a new date object with departure time and make sure departure time is not in the past
     //else create a new date object and use that as departure time
-    var departureDate = new Date();
+    var currentTime = new Date();
+    if (!departureTime || departureTime < currentTime)
+      departureTime = currentTime;
+    departureTime = departureTime.getTime() / 1000;
+    departureTime = Math.ceil(departureTime);
 
     //create a distanceMatrix service request using origin name, destination name and departure time
 
@@ -45,11 +49,19 @@ export default class GoogleMap {
     var response;
 
     //can you access variable in android manifest???
-    console.log(originName, destinationName, REACT_APP_GOOGLE_MAPS_API_KEY);
+    console.log(
+      originName,
+      destinationName,
+      departureTime,
+      REACT_APP_GOOGLE_MAPS_API_KEY,
+    );
 
     response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&region=EG&origins=${originName}&destinations=${destinationName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
+      `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&region=EG&origins=${originName}&destinations=${destinationName}&departure_time=${departureTime}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
     );
+    // response = await fetch(
+    //   `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&region=EG&origins=${originName}&destinations=${destinationName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
+    // );
 
     var response = await response.json();
     console.log('distance matrix response', response);
@@ -69,6 +81,8 @@ export default class GoogleMap {
       distanceInMeters = response.rows[0].elements[0].distance.value;
       console.log('distance text:', response.rows[0].elements[0].distance.text);
       durationInSeconds = response.rows[0].elements[0].duration.value;
+      durationInTrafficSeconds =
+        response.rows[0].elements[0].duration_in_traffic.value;
       console.log('duration text:', response.rows[0].elements[0].duration.text);
     }
     console.log(
@@ -76,8 +90,10 @@ export default class GoogleMap {
       status,
       '\ndistance matrix inner status: ',
       innerStatus,
-      ' \ndistance matrix duration in seconds durationInSeconds: ',
+      ' \ndistance matrix duration in seconds: ',
       durationInSeconds,
+      ' \ndistance matrix duration in traffic seconds: ',
+      durationInTrafficSeconds,
       '\ndistance matrix distance in meters: ',
       distanceInMeters,
       '\ndistanceMatrix origin formatted name: ',
@@ -89,7 +105,7 @@ export default class GoogleMap {
       innerStatus,
       status,
       distanceInMeters,
-      durationInSeconds,
+      durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     };

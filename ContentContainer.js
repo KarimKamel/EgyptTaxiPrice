@@ -32,7 +32,7 @@ export default function ContentContainer(props) {
   const [tripPrice, setTripPrice] = useState(0);
   const [tripDuration, setTripDuration] = useState({hours: 0, minutes: 0});
   const [tripDistance, setTripDistance] = useState(0);
-  const [departureTime, setDepartureTime] = useState(new Date());
+  const [departureTime, setDepartureTime] = useState();
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -65,13 +65,16 @@ export default function ContentContainer(props) {
     destinationFormattedName,
 
     distanceInMeters,
-    durationInSeconds,
+    durationInTrafficSeconds,
   ) {
-    const _tripPrice = mapHelper.getPrice(distanceInMeters, durationInSeconds);
+    const _tripPrice = mapHelper.getPrice(
+      distanceInMeters,
+      durationInTrafficSeconds,
+    );
 
     //convert trip time to hours and minutes
 
-    const {hours, minutes} = mapHelper.convertTime(durationInSeconds);
+    const {hours, minutes} = mapHelper.convertTime(durationInTrafficSeconds);
 
     //set trip distance in state
 
@@ -104,10 +107,14 @@ export default function ContentContainer(props) {
         innerStatus,
         status,
         distanceInMeters,
-        durationInSeconds,
+        durationInTrafficSeconds,
         originFormattedName,
         destinationFormattedName,
-      } = await mapHelper.getTripData(originName, destinationName);
+      } = await mapHelper.getTripData(
+        originName,
+        destinationName,
+        departureTime,
+      );
 
       if (innerStatus === 'OK') {
         setRouteNotFoundError(false);
@@ -118,7 +125,7 @@ export default function ContentContainer(props) {
           originFormattedName,
           destinationFormattedName,
           distanceInMeters,
-          durationInSeconds,
+          durationInTrafficSeconds,
         );
 
         console.log('originFormattedName', originFormattedName);
@@ -209,7 +216,7 @@ export default function ContentContainer(props) {
 
     const {
       distanceInMeters,
-      durationInSeconds,
+      durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(coords, destinationName);
@@ -219,7 +226,7 @@ export default function ContentContainer(props) {
       originFormattedName,
       destinationFormattedName,
       distanceInMeters,
-      durationInSeconds,
+      durationInTrafficSeconds,
     );
   };
   const onDestinationDragEnd = async e => {
@@ -230,7 +237,7 @@ export default function ContentContainer(props) {
     console.log(coords);
     const {
       distanceInMeters,
-      durationInSeconds,
+      durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(originName, coords);
@@ -240,7 +247,7 @@ export default function ContentContainer(props) {
       originFormattedName,
       destinationFormattedName,
       distanceInMeters,
-      durationInSeconds,
+      durationInTrafficSeconds,
     );
   };
   return (

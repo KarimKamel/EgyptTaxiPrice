@@ -15,7 +15,7 @@ export default function Form(props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [originIsEmpty, setOriginIsEmpty] = useState(false);
   const [destinationIsEmpty, setdestinationIsEmpty] = useState(false);
-  const [departureTimeError, , setDepartureTimeError] = useState(false);
+  const [departureTimeError, setDepartureTimeError] = useState(false);
   const {
     setDestinationName,
     setDepartureTime,
@@ -68,6 +68,7 @@ export default function Form(props) {
     if (date >= new Date()) {
       console.log('selected is not in the past');
       setDepartureTimeError(false);
+      setDepartureTime(date);
     } else {
       console.log('date is in the past');
       setDepartureTimeError(true);
@@ -182,20 +183,20 @@ export default function Form(props) {
             type="submit"></Button>
         </View>
 
+        {/* <View
+            style={[s.row, {marginLeft: 0, padding: 0, flexGrow: 1}]}></View> */}
+      </View>
+
+      <View style={[s.col4, s.colMd4, {marginLeft: 0, padding: 0}]}>
+        {routeNotFoundError && (
+          <Text style={{color: 'red'}}>{t('form:routeErrorMessage')}</Text>
+        )}
         {departureTimeError && (
           <Text style={{color: 'red', ...getAlignment()}}>
             {t('form:departureTimeErrorMessage')}
           </Text>
         )}
-        {/* <View
-            style={[s.row, {marginLeft: 0, padding: 0, flexGrow: 1}]}></View> */}
       </View>
-
-      <View style={[s.col4, s.colMd4, {marginLeft: 0, padding: 0}]}></View>
-
-      {routeNotFoundError && (
-        <Text style={{color: 'red'}}>{t('form:routeErrorMessage')}</Text>
-      )}
     </View>
     // </View>
   );
