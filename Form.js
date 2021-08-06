@@ -15,6 +15,7 @@ export default function Form(props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [originIsEmpty, setOriginIsEmpty] = useState(false);
   const [destinationIsEmpty, setdestinationIsEmpty] = useState(false);
+  const [departureTimeError, , setDepartureTimeError] = useState(false);
   const {
     setDestinationName,
     setDepartureTime,
@@ -25,7 +26,7 @@ export default function Form(props) {
     destinationError,
     originError,
     routeNotFoundError,
-    departureTimeError,
+
     departureTime,
     i18n,
     t,
@@ -61,7 +62,17 @@ export default function Form(props) {
   };
 
   const handleConfirm = date => {
-    console.warn('A date has been picked: ', date);
+    const currentDate = new Date();
+    console.log('currentDate:', currentDate);
+    console.log('input date', date);
+    if (date >= new Date()) {
+      console.log('selected is not in the past');
+      setDepartureTimeError(false);
+    } else {
+      console.log('date is in the past');
+      setDepartureTimeError(true);
+    }
+
     hideDatePicker();
   };
   //add text input validation for length to be >= 10
@@ -157,7 +168,7 @@ export default function Form(props) {
           />
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
-            mode="date"
+            mode="datetime"
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
