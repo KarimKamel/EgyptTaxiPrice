@@ -1,21 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, StatusBar, ScrollView} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
 import TripInfo from './TripInfo';
-import GoogleMap from './GoogleMapClass';
-import {REACT_APP_GOOGLE_MAPS_API_KEY} from '@env';
-
+import GoogleMapHelper from './GoogleMapClass';
 import {useIsConnected} from 'react-native-offline';
-
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
-
 import Header from './Header';
-
 const bootstrapStyleSheet = new BootstrapStyleSheet();
-const {s, c} = bootstrapStyleSheet;
-
-const ggmap = new GoogleMap();
 
 export default function ContentContainer(props) {
   const isConnected = useIsConnected();
@@ -28,21 +20,20 @@ export default function ContentContainer(props) {
     longitude: 31.219709,
   }); //cairo
   const [originCoords, setOriginCoords] = useState({
-    latitude: 30.0609422,
-    longitude: 31.219709,
+    isReady: false,
+    latitude: '',
+    longitude: '',
   });
   const [destinationCoords, setDestinationCoords] = useState({
-    latitude: 30.0380584,
-    longitude: 31.2325889,
+    isReady: false,
+    latitude: '',
+    longitude: '',
   });
   const [tripPrice, setTripPrice] = useState(0);
   const [tripDuration, setTripDuration] = useState({hours: 0, minutes: 0});
   const [tripDistance, setTripDistance] = useState(0);
   const [departureTime, setDepartureTime] = useState(new Date());
-  const [screenDimensions, setScreenDimensions] = useState({
-    height: '',
-    width: '',
-  });
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -50,26 +41,20 @@ export default function ContentContainer(props) {
   const [destinationErrorMessage, setDestinationErrorMessage] = useState(false);
   const [routeNotFoundError, setRouteNotFoundError] = useState(false);
   const [showTripInfo, setShowTripInfo] = useState(true);
+  const [originNotEgypt, setOriginNotEgypt] = useState(false);
+  const [destinationNotEgypt, setDestinationNotEgypt] = useState(false);
 
-  const [mapObject, setMap] = React.useState(null);
-
-  useEffect(() => {
-    console.log('destination name ', destinationName);
-    console.log('origin name ', originName);
-    bootstrapStyleSheet.addOrientationListener(data => {
-      setScreenDimensions({width: data.width, height: data.height});
-    });
-  }, []);
+  const [mapHelper, setMapHelper] = React.useState(null);
 
   const onLoad = React.useCallback(function callback() {
-    console.log('in on load');
+    // console.log('in on load');
     setIsLoaded(true);
 
-    const googleMapObject = new GoogleMap();
-    setMap(googleMapObject);
+    const googleMapHelper = new GoogleMapHelper();
+    setMapHelper(googleMapHelper);
   }, []);
   const onUnmount = React.useCallback(function callback(map) {
-    setMap(null);
+    setMapHelper(null);
   }, []);
 
   // fill in the fields that make up the trip info banner
@@ -82,11 +67,11 @@ export default function ContentContainer(props) {
     distanceInMeters,
     durationInSeconds,
   ) {
-    const _tripPrice = mapObject.getPrice(distanceInMeters, durationInSeconds);
+    const _tripPrice = mapHelper.getPrice(distanceInMeters, durationInSeconds);
 
     //convert trip time to hours and minutes
 
-    const {hours, minutes} = mapObject.convertTime(durationInSeconds);
+    const {hours, minutes} = mapHelper.convertTime(durationInSeconds);
 
     //set trip distance in state
 
@@ -104,79 +89,115 @@ export default function ContentContainer(props) {
     setShowTripInfo(true);
   }
 
-  const handleSubmit = async e => {
+  const handleSubmit = async () => {
+    console.log('in handle submit');
     setRouteNotFoundError(false);
     setOriginErrorMessage(false);
     setDestinationErrorMessage(false);
-    e.preventDefault();
+    // e.preventDefault();
     // console.log("origin:", originName);
     // console.log("destination", destinationName);
 
     //get trip duration, distance, origin and destination formatted names using distance matrix service
     try {
       const {
+        innerStatus,
         status,
         distanceInMeters,
         durationInSeconds,
         originFormattedName,
         destinationFormattedName,
-      } = await mapObject.getTripData(originName, destinationName);
+      } = await mapHelper.getTripData(originName, destinationName);
 
-      if (status === 'OK') {
+      if (innerStatus === 'OK') {
+        setRouteNotFoundError(false);
+        setOriginErrorMessage(false);
+        setDestinationErrorMessage(false);
+
         makeTripInfo(
           originFormattedName,
           destinationFormattedName,
-
           distanceInMeters,
           durationInSeconds,
         );
-      } else if (status === 'ZERO_RESULTS') {
+
+        console.log('originFormattedName', originFormattedName);
+        const {_locationCoords: _originCoords, locationCountry: originCountry} =
+          await mapHelper.geocodeLocation(originFormattedName);
+
+        if (originCountry !== 'Egypt') {
+          setOriginNotEgypt(true);
+          console.log('origin is not egypt');
+        }
+        setOriginCoords({
+          isReady: true,
+          latitude: _originCoords.lat,
+          longitude: _originCoords.lng,
+        });
+        console.log('destinationFormattedName', destinationFormattedName);
+        const {
+          _locationCoords: _destinationCoords,
+          locationCountry: destinationCountry,
+        } = await mapHelper.geocodeLocation(destinationFormattedName);
+
+        if (destinationCountry !== 'Egypt') {
+          setDestinationNotEgypt(true);
+          console.log('destination is not Egypt');
+        }
+        setDestinationCoords({
+          isReady: true,
+          latitude: _destinationCoords.lat,
+          longitude: _destinationCoords.lng,
+        });
+      } else if (innerStatus === 'ZERO_RESULTS') {
         //zero results means no route connecting origin and destination was found
         //show error message accordingly
+        setOriginCoords({
+          isReady: false,
+          latitude: '',
+          longitude: '',
+        });
+        setDestinationCoords({
+          isReady: false,
+          latitude: '',
+          longitude: '',
+        });
 
         setRouteNotFoundError(true);
         setShowTripInfo(false);
         setOriginErrorMessage(false);
         setDestinationErrorMessage(false);
 
-        setDestinationName(destinationFormattedName);
-        setOriginName(originFormattedName);
+        // setDestinationName(destinationFormattedName);
+        // setOriginName(originFormattedName);
       } else {
         //if execution reaches this point it means origin or destination were not found
         //show error message accordingly
         setRouteNotFoundError(false);
         setShowTripInfo(false);
+        if (originFormattedName) setOriginName(originFormattedName);
+        else {
+          setOriginCoords({
+            isReady: false,
+            latitude: '',
+            longitude: '',
+          });
+          setOriginErrorMessage(true);
+        }
+
         if (destinationFormattedName)
           setDestinationName(destinationFormattedName);
-        else setDestinationErrorMessage(true);
-        if (originFormattedName) setOriginName(originFormattedName);
-        else setOriginErrorMessage(true);
+        else {
+          setDestinationErrorMessage(true);
+          setDestinationCoords({
+            isReady: false,
+            latitude: '',
+            longitude: '',
+          });
+        }
       }
-
-      // get origin and destination coords from their name using geocode service.
-
-      const {_originCoords, _destinationCoords} =
-        await mapObject.geocodeLocations(
-          originFormattedName,
-          destinationFormattedName,
-        );
-
-      //set origin and destination coords in state and pass them to markers as props
-
-      setOriginCoords({
-        latitude: _originCoords.lat,
-        longitude: _originCoords.lng,
-      });
-      setDestinationCoords({
-        latitude: _destinationCoords.lat,
-        longitude: _destinationCoords.lng,
-      });
-
-      // const scrollElement = document.querySelector("#target");
-      // scrollElement.scrollIntoView();
-      // scrollIntoView(document.querySelector("#target") );
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   };
   const onOriginDragEnd = async e => {
@@ -191,7 +212,7 @@ export default function ContentContainer(props) {
       durationInSeconds,
       originFormattedName,
       destinationFormattedName,
-    } = await mapObject.getTripData(coords, destinationName);
+    } = await mapHelper.getTripData(coords, destinationName);
     console.log('from: ', originFormattedName);
     console.log('to: ', destinationFormattedName);
     makeTripInfo(
@@ -212,7 +233,7 @@ export default function ContentContainer(props) {
       durationInSeconds,
       originFormattedName,
       destinationFormattedName,
-    } = await mapObject.getTripData(originName, coords);
+    } = await mapHelper.getTripData(originName, coords);
     console.log('from: ', originFormattedName);
     console.log('to: ', destinationFormattedName);
     makeTripInfo(
@@ -221,14 +242,12 @@ export default function ContentContainer(props) {
       distanceInMeters,
       durationInSeconds,
     );
-
-    // get trip fare based on duration and distance
   };
   return (
     <ScrollView>
       <Header />
 
-      <View style={styles.scrollView}>
+      <View style={{marginHorizontal: 10}}>
         {!isConnected && (
           <Text style={{color: 'red', padding: 8}}>
             {t('container:loadMapError')}
@@ -247,6 +266,8 @@ export default function ContentContainer(props) {
             originError={originErrorMessage}
             routeNotFoundError={routeNotFoundError}
             departureTime={departureTime}
+            destinationNotEgypt={destinationNotEgypt}
+            originNotEgypt={originNotEgypt}
             i18n={i18n}
             primary={true}
             t={t}
@@ -278,16 +299,3 @@ export default function ContentContainer(props) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
-  scrollView: {
-    marginHorizontal: 20,
-  },
-  text: {
-    fontSize: 42,
-  },
-});

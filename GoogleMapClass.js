@@ -43,33 +43,50 @@ export default class GoogleMap {
     //call distance matrix service
 
     var response;
-    try {
-      //can you access variable in android manifest???
-      console.log(originName, destinationName, REACT_APP_GOOGLE_MAPS_API_KEY);
-      console.log(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${originName}&destinations=${destinationName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
-      );
-      response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${originName}&destinations=${destinationName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
-      );
-    } catch (error) {
-      console.log(error);
-    }
+
+    //can you access variable in android manifest???
+    console.log(originName, destinationName, REACT_APP_GOOGLE_MAPS_API_KEY);
+
+    response = await fetch(
+      `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&region=EG&origins=${originName}&destinations=${destinationName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
+    );
+
     var response = await response.json();
-    console.log(response);
+    console.log('distance matrix response', response);
+    const status = response.status;
+    var innerStatus;
+    if (status === 'OK') innerStatus = response.rows[0].elements[0].status;
+    console.log('distance matrix status:', status);
+    console.log('distance matrix inner status:', innerStatus);
     const originFormattedName = response.origin_addresses[0];
     const destinationFormattedName = response.destination_addresses[0];
-    const status = response.rows[0].elements[0].status;
+
     var distanceInMeters;
     var durationInSeconds;
-    if (status === 'OK') {
+
+    if (innerStatus === 'OK') {
+      console.log(response.rows[0].elements);
       distanceInMeters = response.rows[0].elements[0].distance.value;
       console.log('distance text:', response.rows[0].elements[0].distance.text);
       durationInSeconds = response.rows[0].elements[0].duration.value;
       console.log('duration text:', response.rows[0].elements[0].duration.text);
     }
-
+    console.log(
+      'distance matrix status: ',
+      status,
+      '\ndistance matrix inner status: ',
+      innerStatus,
+      ' \ndistance matrix duration in seconds durationInSeconds: ',
+      durationInSeconds,
+      '\ndistance matrix distance in meters: ',
+      distanceInMeters,
+      '\ndistanceMatrix origin formatted name: ',
+      originFormattedName,
+      '\ndistancematrix destination formatted name: ',
+      destinationFormattedName,
+    );
     return {
+      innerStatus,
       status,
       distanceInMeters,
       durationInSeconds,
@@ -94,12 +111,56 @@ export default class GoogleMap {
     }
     originValues = await originValues.json();
     destinationValues = await destinationValues.json();
-    console.log('originValues', originValues);
-    console.log('destinationValues', destinationValues);
+    // console.log('originValues', originValues);
+    // console.log(
+    //   'address components',
+    //   originValues.results[0].address_components,
+    // );
+    // console.log('originValues', originValues.results[0].address_components[3]);
+    const originCountry =
+      originValues.results[0].address_components[3].long_name;
+    const destinationCountry =
+      destinationValues.results[0].address_components[3].long_name;
+    // console.log('destinationValues', destinationValues);
     const _originCoords = originValues.results[0].geometry.location;
     const _destinationCoords = destinationValues.results[0].geometry.location;
     // console.log(_originCoords, _destinationCoords);
-    return {_originCoords, _destinationCoords};
+    return {
+      _originCoords,
+      _destinationCoords,
+      originCountry,
+      destinationCountry,
+    };
+  };
+  geocodeLocation = async locationFormattedName => {
+    var locationValues;
+
+    locationValues = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${locationFormattedName}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
+    );
+
+    locationValues = await locationValues.json();
+
+    // console.log('locationValues', locationValues);
+    // console.log(
+    //   'address components',
+    //   locationValues.results[0].address_components[0],
+    // );
+
+    var locationCountry;
+    locationValues.results[0].address_components.forEach(element => {
+      if (element.types && element.types.includes('country'))
+        locationCountry = element.long_name;
+    });
+
+    const _locationCoords = locationValues.results[0].geometry.location;
+
+    // console.log(_originCoords, _destinationCoords);
+    return {
+      _locationCoords,
+
+      locationCountry,
+    };
   };
 
   getPrice(distanceInMeters, durationInSeconds) {

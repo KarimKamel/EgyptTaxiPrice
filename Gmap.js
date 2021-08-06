@@ -48,14 +48,22 @@ export default function Gmap(props) {
         ref={mapRefContainer}
         onMapReady={onLoad}
         style={styles.map}
-        camera={{
+        initialCamera={{
           center: center,
           heading: 10,
           pitch: 10,
           zoom: 10,
           altitude: 50,
-        }}>
-        {originPosition && (
+        }}
+        // camera={{
+        //   center: center,
+        //   heading: 10,
+        //   pitch: 10,
+        //   zoom: 10,
+        //   altitude: 50,
+        // }}
+      >
+        {originPosition.isReady && (
           <Marker
             draggable={true}
             identifier={'origin'}
@@ -66,7 +74,7 @@ export default function Gmap(props) {
           />
         )}
 
-        {destinationPosition && (
+        {destinationPosition.isReady && (
           <Marker
             draggable={true}
             identifier={'destination'}
@@ -91,8 +99,8 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-    width: 350,
-    height: 400,
+    width: 'auto',
+    height: 300,
     display: 'flex',
     // width: Dimensions.get("window").width,
     // height: Dimensions.get("window").height,

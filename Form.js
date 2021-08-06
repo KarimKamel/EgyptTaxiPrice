@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 
-import BootstrapStyleSheet from "react-native-bootstrap-styles";
-import { View, Text, TextInput, Button } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import BootstrapStyleSheet from 'react-native-bootstrap-styles';
+import {View, Text, TextInput, Button} from 'react-native';
+// import {View, Text, Button} from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+// import TextInput from 'react-native-input-validator';
 
 const bootstrapStyleSheet = new BootstrapStyleSheet();
-const { s, c } = bootstrapStyleSheet;
+const {s, c} = bootstrapStyleSheet;
 
-const submitButtonStyle = { backgroundColor: "rgb(160 16 16)" };
+const submitButtonStyle = {backgroundColor: 'rgb(160 16 16)'};
 
 export default function Form(props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [originIsEmpty, setOriginIsEmpty] = useState(false);
+  const [destinationIsEmpty, setdestinationIsEmpty] = useState(false);
   const {
     setDestinationName,
     setDepartureTime,
@@ -25,10 +29,27 @@ export default function Form(props) {
     departureTime,
     i18n,
     t,
+    originNotEgypt,
+    destinationNotEgypt,
   } = props;
 
+  const verifySubmit = () => {
+    if (originValue.length === 0) {
+      setOriginIsEmpty(true);
+    }
+    if (destinationValue.length === 0) {
+      setdestinationIsEmpty(true);
+    }
+    if (destinationValue.length > 0 && originValue.length > 0) {
+      setdestinationIsEmpty(false);
+      setOriginIsEmpty(false);
+      handleSubmit();
+    }
+  };
+
   function getAlignment() {
-    return { textAlign: i18n.language === "en" ? "left" : "right" };
+    return {textAlign: i18n.language === 'en' ? 'left' : 'right'};
+    // return {textAlign: 'left'};
   }
 
   const showDatePicker = () => {
@@ -40,39 +61,51 @@ export default function Form(props) {
   };
 
   const handleConfirm = date => {
-    console.warn("A date has been picked: ", date);
+    console.warn('A date has been picked: ', date);
     hideDatePicker();
   };
-
+  //add text input validation for length to be >= 10
   return (
+    // <View style={{paddingLeft: 20, paddingRight: 20}}>
     <View>
-      <Text style={[s.lead, { fontSize: 18, ...getAlignment() }]}>
-        {t("form:subtitle")}
+      <Text style={[s.lead, {fontSize: 18, ...getAlignment()}]}>
+        {t('form:subtitle')}
       </Text>
 
-      <Text style={[s.formLabelText, { marginTop: 8 }]}>{t("form:from")}</Text>
+      <Text style={[s.formLabelText, {marginTop: 8}]}>{t('form:from')}</Text>
+
       <TextInput
         style={[s.formControl, getAlignment()]}
         id="originInput"
         type="text"
-        onChangeText={setOriginName}
+        onChangeText={text => setOriginName(text)}
         // onChangeText={e => handleTextInput(e)}
         className="form-control"
         value={originValue}
-        placeholder={t("form:origin")}
+        placeholder={t('form:origin')}
       />
+      {originIsEmpty && (
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:searchErrorMessage')}
+        </Text>
+      )}
 
       {originError && (
-        <Text style={{ color: "red", ...getAlignment() }}>
-          {t("form:searchErrorMessage")}
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:searchErrorMessage')}
+        </Text>
+      )}
+      {originNotEgypt && (
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:locationNotEgypt')}
         </Text>
       )}
 
       <Text
-        style={[s.formLabelText, { marginTop: 8 }]}
+        style={[s.formLabelText, {marginTop: 8}]}
         // style={getAlignment()}
         htmlFor="destinationInput">
-        {t("form:to")}
+        {t('form:to')}
       </Text>
 
       <TextInput
@@ -82,56 +115,77 @@ export default function Form(props) {
         onChangeText={setDestinationName}
         className="form-control"
         value={destinationValue}
-        placeholder={t("form:destination")}
+        placeholder={t('form:destination')}
       />
+      {destinationIsEmpty && (
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:searchErrorMessage')}
+        </Text>
+      )}
       {destinationError && (
-        <Text style={{ color: "red", ...getAlignment() }}>
-          {t("form:searchErrorMessage")}
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:searchErrorMessage')}
+        </Text>
+      )}
+      {destinationNotEgypt && (
+        <Text style={{color: 'red', ...getAlignment()}}>
+          {t('form:locationNotEgypt')}
         </Text>
       )}
 
-      <Text style={[s.formLabelText, { marginTop: 8 }]}>
-        {t("form:departure time")}
+      <Text style={[s.formLabelText, {marginTop: 8}]}>
+        {t('form:departure time')}
       </Text>
 
-      <Text style={[s.textSmall]}>{t("form:asterisk message")}</Text>
-      <View style={[s.row, { margin: 0, marginTop: 8 }]}>
+      <Text style={[s.textSmall]}>{t('form:asterisk message')}</Text>
+      <View
+        style={[
+          {
+            display: 'flex',
+            flexDirection: 'row',
+            marginTop: 16,
+            marginBottom: 16,
+          },
+        ]}>
         {/* <View style={{ marginTop: 8, marginLeft: 0 }}> */}
-        <View
-          style={[
-            s.col4,
-            s.colMd8,
-            { marginLeft: 0, marginRight: 8, padding: 0 },
-          ]}>
-          <Button title="Show Date Picker" onPress={showDatePicker} />
+        {/* <View style={[{marginLeft: 0, marginRight: 8, padding: 0}]}> */}
+        <View style={{flex: 1}}>
+          <Button
+            title="Show Date Picker"
+            onPress={showDatePicker}
+            style={{flex: 1}}
+          />
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
-          {departureTimeError && (
-            <Text style={{ color: "red", ...getAlignment() }}>
-              {t("form:departureTimeErrorMessage")}
-            </Text>
-          )}
-          <View
-            style={[s.row, { marginLeft: 0, padding: 0, flexGrow: 1 }]}></View>
         </View>
-
-        <View style={[s.col4, s.colMd4, { marginLeft: 0, padding: 0 }]}>
+        <View style={{flex: 1}}>
           <Button
-            title={t("form:submit")}
+            title={t('form:submit')}
             color="#8b1414"
-            onPress={handleSubmit}
+            onPress={() => verifySubmit()}
             // style={{ backgroundColor: "rgb(160 16 16)" }}
             type="submit"></Button>
         </View>
 
-        {routeNotFoundError && (
-          <Text style={{ color: "red" }}>{t("form:routeErrorMessage")}</Text>
+        {departureTimeError && (
+          <Text style={{color: 'red', ...getAlignment()}}>
+            {t('form:departureTimeErrorMessage')}
+          </Text>
         )}
+        {/* <View
+            style={[s.row, {marginLeft: 0, padding: 0, flexGrow: 1}]}></View> */}
       </View>
+
+      <View style={[s.col4, s.colMd4, {marginLeft: 0, padding: 0}]}></View>
+
+      {routeNotFoundError && (
+        <Text style={{color: 'red'}}>{t('form:routeErrorMessage')}</Text>
+      )}
     </View>
+    // </View>
   );
 }
