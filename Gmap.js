@@ -48,7 +48,7 @@ export default function Gmap(props) {
   return (
     // < className="col-12 col-md-8 col-lg-6 col-xl-6 text-left px-lg-4">
 
-    <View style={styles.map}>
+    <View style={styles.container}>
       <MapView
         ref={mapRefContainer}
         onMapReady={onLoad}
@@ -97,16 +97,19 @@ export default function Gmap(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // flex: 1,
+    // height:300,
+    // width:"auto",
+    display:"flex",
+    // backgroundColor: '#fff',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   map: {
-    flex: 1,
-    width: 'auto',
-    height: 300,
-    display: 'flex',
+    // flex: 2,
+    // width: 'auto',
+    height: 290,
+    // display: 'flex',
     // width: Dimensions.get("window").width,
     // height: Dimensions.get("window").height,
   },
