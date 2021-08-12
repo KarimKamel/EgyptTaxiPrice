@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, Text, Switch} from 'react-native';
+import {View, Text} from 'react-native';
 
-export default function TripInfo(props) {
-  const {tripDuration, tripDistance, tripPrice, id, t} = props;
+const  TripInfo =(props) => {
+  const {tripDuration, tripDistance, tripPrice, id, t,} = props;
   return (
-    <View style = {{paddingTop:10}} >
+    <View 
+       style = {{paddingTop:10}} >
       {tripDistance !== 0 && (
         <View style={{ padding:5,backgroundColor:"white"}}>
          <Text style={{color:"#8b1414"}}> 
@@ -29,6 +30,11 @@ export default function TripInfo(props) {
           
         </View>
       )}
-    </View>
-  );
+    </View>)
 }
+  
+    
+  
+  
+  export default TripInfo
+

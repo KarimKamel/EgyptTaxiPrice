@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   map: {
     // flex: 2,
     // width: 'auto',
-    height: 290,
+    height: 400,
     // display: 'flex',
     // width: Dimensions.get("window").width,
     // height: Dimensions.get("window").height,

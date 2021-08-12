@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
@@ -10,10 +10,13 @@ import Header from './Header';
 
 
 export default function ContentContainer(props) {
+  const [scrollCoords, setScrollCoords] = useState({x:"",y:""})
+  
   const isConnected = useIsConnected();
   // const isConnected = false
   const {t, i18n} = props;
-
+const tripInfoElement = useRef(null)
+const scrollViewElement = useRef(null)
   const [originName, setOriginName] = useState('zamalek cairo');
   const [destinationName, setDestinationName] = useState('gardencity cairo');
   const [center, setCenter] = useState({
@@ -98,7 +101,7 @@ export default function ContentContainer(props) {
     setRouteNotFoundError(false);
     setOriginErrorMessage(false);
     setDestinationErrorMessage(false);
-
+    
 
     //get trip duration, distance, origin and destination formatted names using distance matrix service
     try {
@@ -155,6 +158,7 @@ export default function ContentContainer(props) {
           latitude: _destinationCoords.lat,
           longitude: _destinationCoords.lng,
         });
+        scrollViewElement.current.scrollTo(scrollCoords)
       } else if (innerStatus === 'ZERO_RESULTS') {
         //zero results means no route connecting origin and destination was found
         //show error message accordingly
@@ -173,6 +177,7 @@ export default function ContentContainer(props) {
         setShowTripInfo(false);
         setOriginErrorMessage(false);
         setDestinationErrorMessage(false);
+        
 
         // setDestinationName(destinationFormattedName);
         // setOriginName(originFormattedName);
@@ -250,7 +255,10 @@ export default function ContentContainer(props) {
     );
   };
   return (
-    <ScrollView>
+    <ScrollView ref = {scrollViewElement} 
+    onLayout={(event) => 
+      setScrollCoords({x:0,y:(event.nativeEvent.layout.y+event.nativeEvent.layout.height)})
+      } >
       <Header />
 
       <View style={{marginHorizontal: 10}}>
@@ -279,7 +287,8 @@ export default function ContentContainer(props) {
             t={t}
           />
 
-          <View style={{flex: 1, flexDirection: 'column'}}>
+          <View 
+          style={{flex: 1, flexDirection: 'column'}}>
             <Gmap
               loadError={loadError}
               center={center}
@@ -293,7 +302,9 @@ export default function ContentContainer(props) {
               destinationName={destinationName}>
               {showTripInfo && (
                 <TripInfo
+                 
                   t={t}
+                 
                   tripPrice={tripPrice}
                   tripDistance={tripDistance}
                   tripDuration={tripDuration}
