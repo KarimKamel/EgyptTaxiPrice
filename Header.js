@@ -17,13 +17,12 @@ export default function Header() {
 
   const onLanguageChange = event => {
     
-
-    if (i18n.language === "ar") {
+    if(event){
       i18n.changeLanguage("en");
-      setInputSwitch(prev => !prev);
+      setInputSwitch(event);
     } else {
       i18n.changeLanguage("ar");
-      setInputSwitch(prev => !prev);
+      setInputSwitch(event);
     }
   };
   return (

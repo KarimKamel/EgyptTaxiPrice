@@ -30,9 +30,9 @@ export default function Gmap(props) {
   const mapRefContainer = useRef(null);
   useEffect(() => {
     // const mapView = new MapView();
-    console.log(originPosition);
+    
     if (mapRefContainer.current.fitToSuppliedMarkers){ 
-      console.log(mapRefContainer.current);
+      
       mapRefContainer.current.fitToSuppliedMarkers(['origin', 'destination'], {
       edgePadding: {
         top: 150,

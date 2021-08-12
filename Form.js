@@ -63,14 +63,13 @@ export default function Form(props) {
 
   const handleConfirm = date => {
     const currentDate = new Date();
-    console.log('currentDate:', currentDate);
-    console.log('input date', date);
+    
     if (date >= new Date()) {
-      console.log('selected is not in the past');
+      
       setDepartureTimeError(false);
       setDepartureTime(date);
     } else {
-      console.log('date is in the past');
+      
       setDepartureTimeError(true);
     }
 

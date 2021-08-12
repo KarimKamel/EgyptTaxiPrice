@@ -48,7 +48,7 @@ export default function ContentContainer(props) {
   const [mapHelper, setMapHelper] = React.useState(null);
 
   const onLoad = React.useCallback(function callback() {
-    // console.log('in on load');
+    
     setIsLoaded(true);
 
     const googleMapHelper = new GoogleMapHelper();
@@ -94,13 +94,11 @@ export default function ContentContainer(props) {
   }
 
   const handleSubmit = async () => {
-    console.log('in handle submit');
+    
     setRouteNotFoundError(false);
     setOriginErrorMessage(false);
     setDestinationErrorMessage(false);
-    // e.preventDefault();
-    // console.log("origin:", originName);
-    // console.log("destination", destinationName);
+
 
     //get trip duration, distance, origin and destination formatted names using distance matrix service
     try {
@@ -129,20 +127,20 @@ export default function ContentContainer(props) {
           durationInTrafficSeconds,
         );
 
-        console.log('originFormattedName', originFormattedName);
+        
         const {_locationCoords: _originCoords, locationCountry: originCountry} =
           await mapHelper.geocodeLocation(originFormattedName);
 
         if (originCountry !== 'Egypt') {
           setOriginNotEgypt(true);
-          console.log('origin is not egypt');
+          
         }
         setOriginCoords({
           isReady: true,
           latitude: _originCoords.lat,
           longitude: _originCoords.lng,
         });
-        console.log('destinationFormattedName', destinationFormattedName);
+        
         const {
           _locationCoords: _destinationCoords,
           locationCountry: destinationCountry,
@@ -150,7 +148,7 @@ export default function ContentContainer(props) {
 
         if (destinationCountry !== 'Egypt') {
           setDestinationNotEgypt(true);
-          console.log('destination is not Egypt');
+          
         }
         setDestinationCoords({
           isReady: true,
@@ -213,7 +211,7 @@ export default function ContentContainer(props) {
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    console.log(coords);
+    
 
     const {
       distanceInMeters,
@@ -221,8 +219,8 @@ export default function ContentContainer(props) {
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(coords, destinationName);
-    console.log('from: ', originFormattedName);
-    console.log('to: ', destinationFormattedName);
+    
+    
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,
@@ -235,15 +233,15 @@ export default function ContentContainer(props) {
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    console.log(coords);
+    
     const {
       distanceInMeters,
       durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(originName, coords);
-    console.log('from: ', originFormattedName);
-    console.log('to: ', destinationFormattedName);
+    
+    
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,

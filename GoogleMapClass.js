@@ -20,7 +20,6 @@ export default class GoogleMap {
   }
 
   getTripData = async (originName, destinationName, departureTime) => {
-    console.log('in trip data');
     //if departure time has been changed by the user it will be returned in string format
     //if so, create a new date object with departure time and make sure departure time is not in the past
     //else create a new date object and use that as departure time
@@ -49,12 +48,7 @@ export default class GoogleMap {
     var response;
 
     //can you access variable in android manifest???
-    console.log(
-      originName,
-      destinationName,
-      departureTime,
-      REACT_APP_GOOGLE_MAPS_API_KEY,
-    );
+  
 
     response = await fetch(
       `https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&region=EG&origins=${originName}&destinations=${destinationName}&departure_time=${departureTime}&key=${REACT_APP_GOOGLE_MAPS_API_KEY}`,
@@ -64,12 +58,12 @@ export default class GoogleMap {
     // );
 
     var response = await response.json();
-    console.log('distance matrix response', response);
+    
     const status = response.status;
     var innerStatus;
     if (status === 'OK') innerStatus = response.rows[0].elements[0].status;
-    console.log('distance matrix status:', status);
-    console.log('distance matrix inner status:', innerStatus);
+    
+    
     const originFormattedName = response.origin_addresses[0];
     const destinationFormattedName = response.destination_addresses[0];
 
@@ -77,30 +71,15 @@ export default class GoogleMap {
     var durationInSeconds;
 
     if (innerStatus === 'OK') {
-      console.log(response.rows[0].elements);
+      
       distanceInMeters = response.rows[0].elements[0].distance.value;
-      console.log('distance text:', response.rows[0].elements[0].distance.text);
+      
       durationInSeconds = response.rows[0].elements[0].duration.value;
       durationInTrafficSeconds =
         response.rows[0].elements[0].duration_in_traffic.value;
-      console.log('duration text:', response.rows[0].elements[0].duration.text);
+      
     }
-    console.log(
-      'distance matrix status: ',
-      status,
-      '\ndistance matrix inner status: ',
-      innerStatus,
-      ' \ndistance matrix duration in seconds: ',
-      durationInSeconds,
-      ' \ndistance matrix duration in traffic seconds: ',
-      durationInTrafficSeconds,
-      '\ndistance matrix distance in meters: ',
-      distanceInMeters,
-      '\ndistanceMatrix origin formatted name: ',
-      originFormattedName,
-      '\ndistancematrix destination formatted name: ',
-      destinationFormattedName,
-    );
+    
     return {
       innerStatus,
       status,
@@ -127,20 +106,17 @@ export default class GoogleMap {
     }
     originValues = await originValues.json();
     destinationValues = await destinationValues.json();
-    // console.log('originValues', originValues);
-    // console.log(
-    //   'address components',
-    //   originValues.results[0].address_components,
-    // );
-    // console.log('originValues', originValues.results[0].address_components[3]);
+    
+
+    
     const originCountry =
       originValues.results[0].address_components[3].long_name;
     const destinationCountry =
       destinationValues.results[0].address_components[3].long_name;
-    // console.log('destinationValues', destinationValues);
+    
     const _originCoords = originValues.results[0].geometry.location;
     const _destinationCoords = destinationValues.results[0].geometry.location;
-    // console.log(_originCoords, _destinationCoords);
+    
     return {
       _originCoords,
       _destinationCoords,
@@ -157,11 +133,6 @@ export default class GoogleMap {
 
     locationValues = await locationValues.json();
 
-    // console.log('locationValues', locationValues);
-    // console.log(
-    //   'address components',
-    //   locationValues.results[0].address_components[0],
-    // );
 
     var locationCountry;
     locationValues.results[0].address_components.forEach(element => {
@@ -171,7 +142,7 @@ export default class GoogleMap {
 
     const _locationCoords = locationValues.results[0].geometry.location;
 
-    // console.log(_originCoords, _destinationCoords);
+  
     return {
       _locationCoords,
 
