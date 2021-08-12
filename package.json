@@ -8,12 +8,23 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/bungee-inline": "^0.2.0",
+    "@expo-google-fonts/bungee-shade": "^0.2.0",
+    "@react-native-community/datetimepicker": "^3.5.2",
+    "@react-native-community/netinfo": "^5.9.10",
     "expo": "~42.0.1",
     "expo-status-bar": "~1.0.4",
+    "i18next": "^20.4.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-i18next": "^11.11.4",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
-    "react-native-web": "~0.13.12"
+    "react-native-bootstrap-styles": "^4.5.0-r",
+    "react-native-maps": "^0.28.0",
+    "react-native-modal-datetime-picker": "^10.2.0",
+    "react-native-offline": "^5.8.0",
+    "react-native-splash-screen": "^3.2.0",
+    "react-native-web": "^0.11.7"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
