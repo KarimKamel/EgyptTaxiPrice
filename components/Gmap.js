@@ -9,10 +9,7 @@ import MapView, {Marker} from 'react-native-maps';
 
 // import { GoogleMap, Marker } from "@react-google-maps/api";
 
-const containerStyle = {
-  height: '400px',
-  marginTop: '1rem',
-};
+
 
 export default function Gmap(props) {
   const {
@@ -36,9 +33,9 @@ export default function Gmap(props) {
       mapRefContainer.current.fitToSuppliedMarkers(['origin', 'destination'], {
       edgePadding: {
         top: 150,
-        right: 10,
+        right: 50,
         bottom: 150,
-        left: 10,
+        left: 50,
       },
     }
     )

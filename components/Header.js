@@ -1,28 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, Switch, StatusBar } from "react-native";
+import { View, Text, Switch, StatusBar,StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { BungeeInline_400Regular } from "@expo-google-fonts/bungee-inline";
-import {
-  BungeeShade_400Regular,
-  useFonts,
-} from "@expo-google-fonts/bungee-shade";
+import {BungeeInline_400Regular,BungeeShade_400Regular,useFonts} from "../constants/fonts"
+import colors from "../constants/colors"
 
-export default function Header() {
+
+export default function Header(props) {
   let [fontsLoaded] = useFonts({
     BungeeShade_400Regular,
     BungeeInline_400Regular,
   });
-  const { t, i18n } = useTranslation();
-  const [inputSwitch, setInputSwitch] = useState(true);
+  
+
+  const { i18n } = useTranslation();
+  const [languageSwitch, setLanguageSwitch] = useState(true);
 
   const onLanguageChange = event => {
-    
+    //event is equal to true for english and false for arabic
     if(event){
       i18n.changeLanguage("en");
-      setInputSwitch(event);
+      setLanguageSwitch(event);
     } else {
       i18n.changeLanguage("ar");
-      setInputSwitch(event);
+      setLanguageSwitch(event);
     }
   };
   return (
@@ -30,7 +30,7 @@ export default function Header() {
       <StatusBar
         translucent={false}
         animated={true}
-        backgroundColor="#8b1414"
+        backgroundColor={colors.primary}
       />
       <View
         style={{
@@ -39,24 +39,24 @@ export default function Header() {
           justifyContent: "space-between",
           alignItems: "center",
           paddingRight: 20,
-          backgroundColor: "#8b1414",
+          backgroundColor:colors.primary
         }}>
         <Text
-          style={{
+          style={[{
             padding: 10,
             fontSize: 20,
-
-            // fontFamily: "BungeeInline_400Regular",
-            color: "#fff",
-          }}>
+            //fix font
+            
+            color: colors.lightText,
+          },fontsLoaded&&styles.customFont]}>
           Egypt Taxi Prices
         </Text>
         <View style={{ display: "flex", flexDirection: "row" }}>
           <Text>ar</Text>
           <Switch
-            trackColor={{ false: "white", true: "white" }}
+            trackColor={{ false: colors.lightText, true:colors.lightText }}
             onValueChange={onLanguageChange}
-            value={inputSwitch}
+            value={languageSwitch}
           />
           <Text>en</Text>
         </View>
@@ -64,3 +64,7 @@ export default function Header() {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  customFont:{
+    fontFamily:"BungeeInline_400Regular",
+  }})

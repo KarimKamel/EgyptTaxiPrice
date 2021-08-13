@@ -1,14 +1,15 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import colors from "../constants/colors"
 
 const  TripInfo =(props) => {
-  const {tripDuration, tripDistance, tripPrice, id, t,} = props;
+  const {tripDuration, tripDistance, tripPrice, t,} = props;
   return (
     <View 
        style = {{paddingTop:10}} >
       {tripDistance !== 0 && (
-        <View style={{ padding:5,backgroundColor:"white"}}>
-         <Text style={{color:"#8b1414"}}> 
+        <View style={{ padding:5,backgroundColor:colors.lightBackground}}>
+         <Text style={{color:colors.primary}}> 
         
             {t('tripinfo:duration')}
             <Text>

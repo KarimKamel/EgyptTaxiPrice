@@ -3,23 +3,23 @@ import {View, Text, ScrollView} from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
 import TripInfo from './TripInfo';
-import GoogleMapHelper from './GoogleMapClass';
+import GoogleMapHelper from '../GoogleMapClass';
 import {useIsConnected} from 'react-native-offline';
-
 import Header from './Header';
+import colors from '../constants/colors';
 
 
 export default function ContentContainer(props) {
+
   const [scrollCoords, setScrollCoords] = useState({x:"",y:""})
   
   const isConnected = useIsConnected();
   // const isConnected = false
   const {t, i18n} = props;
-const tripInfoElement = useRef(null)
 const scrollViewElement = useRef(null)
   const [originName, setOriginName] = useState('zamalek cairo');
   const [destinationName, setDestinationName] = useState('gardencity cairo');
-  const [center, setCenter] = useState({
+  const [center] = useState({
     latitude: 30.0609422,
     longitude: 31.219709,
   }); //cairo
@@ -38,8 +38,6 @@ const scrollViewElement = useRef(null)
   const [tripDistance, setTripDistance] = useState(0);
   const [departureTime, setDepartureTime] = useState();
 
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [loadError, setLoadError] = useState(false);
 
   const [originErrorMessage, setOriginErrorMessage] = useState(false);
   const [destinationErrorMessage, setDestinationErrorMessage] = useState(false);
@@ -51,9 +49,6 @@ const scrollViewElement = useRef(null)
   const [mapHelper, setMapHelper] = React.useState(null);
 
   const onLoad = React.useCallback(function callback() {
-    
-    setIsLoaded(true);
-
     const googleMapHelper = new GoogleMapHelper();
     setMapHelper(googleMapHelper);
   }, []);
@@ -259,11 +254,12 @@ const scrollViewElement = useRef(null)
     onLayout={(event) => 
       setScrollCoords({x:0,y:(event.nativeEvent.layout.y+event.nativeEvent.layout.height)})
       } >
-      <Header />
+      <Header/>
+      
 
       <View style={{marginHorizontal: 10}}>
         {!isConnected && (
-          <Text style={{color: 'red', padding: 8}}>
+          <Text style={{color: colors.primary, padding: 8}}>
             {t('container:loadMapError')}
           </Text>
         )}
@@ -290,7 +286,6 @@ const scrollViewElement = useRef(null)
           <View 
           style={{flex: 1, flexDirection: 'column'}}>
             <Gmap
-              loadError={loadError}
               center={center}
               onLoad={onLoad}
               onUnmount={onUnmount}
@@ -301,10 +296,8 @@ const scrollViewElement = useRef(null)
               originName={originName}
               destinationName={destinationName}>
               {showTripInfo && (
-                <TripInfo
-                 
-                  t={t}
-                 
+                <TripInfo                 
+                  t={t}                 
                   tripPrice={tripPrice}
                   tripDistance={tripDistance}
                   tripDuration={tripDuration}
