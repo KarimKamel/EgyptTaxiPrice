@@ -1,0 +1,11 @@
+{
+    "money":"EGP",
+    "duration":"Trip Duration:",
+    "price":"Trip Price:",
+    "distance": "Trip Distance:",
+    "hours" :"hours and ",
+    "minutes": "minutes",
+    "kilometer": "km"
+
+
+}

@@ -8,6 +8,7 @@
     "departure time":"departure time (optional).",
     "asterisk message":"*used to calculate time in traffic. Defaults to current time.",
     "submit":"submit",
+    "pickDate":"pick time and date",
     "searchErrorMessage" :
     "Could not find location; try another search term.", 
    "routeErrorMessage" :

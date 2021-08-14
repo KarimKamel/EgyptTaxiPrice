@@ -1,21 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
 import TripInfo from './TripInfo';
-import GoogleMapHelper from './GoogleMapClass';
+import GoogleMapHelper from '../utils/GoogleMapHelper';
 import {useIsConnected} from 'react-native-offline';
-import BootstrapStyleSheet from 'react-native-bootstrap-styles';
 import Header from './Header';
-const bootstrapStyleSheet = new BootstrapStyleSheet();
+import colors from '../constants/colors';
+
 
 export default function ContentContainer(props) {
-  const isConnected = useIsConnected();
-  const {t, i18n} = props;
 
+  const [scrollCoords, setScrollCoords] = useState({x:"",y:""})
+  
+  const isConnected = useIsConnected();
+  // const isConnected = false
+  const {t, i18n} = props;
+const scrollViewElement = useRef(null)
   const [originName, setOriginName] = useState('zamalek cairo');
   const [destinationName, setDestinationName] = useState('gardencity cairo');
-  const [center, setCenter] = useState({
+  const [center] = useState({
     latitude: 30.0609422,
     longitude: 31.219709,
   }); //cairo
@@ -34,8 +38,6 @@ export default function ContentContainer(props) {
   const [tripDistance, setTripDistance] = useState(0);
   const [departureTime, setDepartureTime] = useState();
 
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [loadError, setLoadError] = useState(false);
 
   const [originErrorMessage, setOriginErrorMessage] = useState(false);
   const [destinationErrorMessage, setDestinationErrorMessage] = useState(false);
@@ -47,9 +49,6 @@ export default function ContentContainer(props) {
   const [mapHelper, setMapHelper] = React.useState(null);
 
   const onLoad = React.useCallback(function callback() {
-    // console.log('in on load');
-    setIsLoaded(true);
-
     const googleMapHelper = new GoogleMapHelper();
     setMapHelper(googleMapHelper);
   }, []);
@@ -93,13 +92,11 @@ export default function ContentContainer(props) {
   }
 
   const handleSubmit = async () => {
-    console.log('in handle submit');
+    
     setRouteNotFoundError(false);
     setOriginErrorMessage(false);
     setDestinationErrorMessage(false);
-    // e.preventDefault();
-    // console.log("origin:", originName);
-    // console.log("destination", destinationName);
+    
 
     //get trip duration, distance, origin and destination formatted names using distance matrix service
     try {
@@ -128,20 +125,20 @@ export default function ContentContainer(props) {
           durationInTrafficSeconds,
         );
 
-        console.log('originFormattedName', originFormattedName);
+        
         const {_locationCoords: _originCoords, locationCountry: originCountry} =
           await mapHelper.geocodeLocation(originFormattedName);
 
         if (originCountry !== 'Egypt') {
           setOriginNotEgypt(true);
-          console.log('origin is not egypt');
+          
         }
         setOriginCoords({
           isReady: true,
           latitude: _originCoords.lat,
           longitude: _originCoords.lng,
         });
-        console.log('destinationFormattedName', destinationFormattedName);
+        
         const {
           _locationCoords: _destinationCoords,
           locationCountry: destinationCountry,
@@ -149,13 +146,14 @@ export default function ContentContainer(props) {
 
         if (destinationCountry !== 'Egypt') {
           setDestinationNotEgypt(true);
-          console.log('destination is not Egypt');
+          
         }
         setDestinationCoords({
           isReady: true,
           latitude: _destinationCoords.lat,
           longitude: _destinationCoords.lng,
         });
+        scrollViewElement.current.scrollTo(scrollCoords)
       } else if (innerStatus === 'ZERO_RESULTS') {
         //zero results means no route connecting origin and destination was found
         //show error message accordingly
@@ -174,6 +172,7 @@ export default function ContentContainer(props) {
         setShowTripInfo(false);
         setOriginErrorMessage(false);
         setDestinationErrorMessage(false);
+        
 
         // setDestinationName(destinationFormattedName);
         // setOriginName(originFormattedName);
@@ -212,7 +211,7 @@ export default function ContentContainer(props) {
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    console.log(coords);
+    
 
     const {
       distanceInMeters,
@@ -220,8 +219,8 @@ export default function ContentContainer(props) {
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(coords, destinationName);
-    console.log('from: ', originFormattedName);
-    console.log('to: ', destinationFormattedName);
+    
+    
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,
@@ -234,15 +233,15 @@ export default function ContentContainer(props) {
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    console.log(coords);
+    
     const {
       distanceInMeters,
       durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(originName, coords);
-    console.log('from: ', originFormattedName);
-    console.log('to: ', destinationFormattedName);
+    
+    
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,
@@ -251,12 +250,16 @@ export default function ContentContainer(props) {
     );
   };
   return (
-    <ScrollView>
-      <Header />
+    <ScrollView ref = {scrollViewElement} 
+    onLayout={(event) => 
+      setScrollCoords({x:0,y:(event.nativeEvent.layout.y+event.nativeEvent.layout.height)})
+      } >
+      <Header/>
+      
 
       <View style={{marginHorizontal: 10}}>
         {!isConnected && (
-          <Text style={{color: 'red', padding: 8}}>
+          <Text style={{color: colors.primary, padding: 8}}>
             {t('container:loadMapError')}
           </Text>
         )}
@@ -280,9 +283,9 @@ export default function ContentContainer(props) {
             t={t}
           />
 
-          <View style={{flex: 1, flexDirection: 'column'}}>
+          <View 
+          style={{flex: 1, flexDirection: 'column'}}>
             <Gmap
-              loadError={loadError}
               center={center}
               onLoad={onLoad}
               onUnmount={onUnmount}
@@ -293,7 +296,8 @@ export default function ContentContainer(props) {
               originName={originName}
               destinationName={destinationName}>
               {showTripInfo && (
-                <TripInfo
+                <TripInfo                 
+                  t={t}                 
                   tripPrice={tripPrice}
                   tripDistance={tripDistance}
                   tripDuration={tripDuration}
