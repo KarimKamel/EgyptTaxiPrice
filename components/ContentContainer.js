@@ -1,9 +1,9 @@
-import React, {useState, useEffect,useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
 import TripInfo from './TripInfo';
-import GoogleMapHelper from '../GoogleMapClass';
+import GoogleMapHelper from '../utils/GoogleMapHelperClass';
 import {useIsConnected} from 'react-native-offline';
 import Header from './Header';
 import colors from '../constants/colors';

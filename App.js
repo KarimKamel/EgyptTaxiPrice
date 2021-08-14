@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
-import './i18n';
+import './utils/i18n';
 import {NetworkProvider} from 'react-native-offline';
 
 import ContentContainer from './components/ContentContainer';
