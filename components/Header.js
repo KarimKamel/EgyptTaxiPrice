@@ -5,7 +5,7 @@ import {BungeeInline_400Regular,BungeeShade_400Regular,useFonts} from "../consta
 import colors from "../constants/colors"
 
 
-export default function Header(props) {
+export default function Header() {
   let [fontsLoaded] = useFonts({
     BungeeShade_400Regular,
     BungeeInline_400Regular,
