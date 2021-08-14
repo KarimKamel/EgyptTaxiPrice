@@ -1,7 +1,22 @@
 # OSX
+#tests
+__tests__
 #
 .DS_Store
-
+#vscode
+.vscode
+#android
+android/
+#ios
+ios/
+#config
+.buckconfig
+metro.config.js
+babel.config.js
+.editorconfig
+.flowconfig
+.env
+.eslintrc.js
 # Xcode
 #
 build/
@@ -57,3 +72,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+#not in expo
+index.js
