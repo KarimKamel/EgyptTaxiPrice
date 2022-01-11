@@ -1,22 +1,22 @@
-import React, {useState, useRef} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
 import TripInfo from './TripInfo';
 import GoogleMapHelper from '../utils/GoogleMapHelperClass';
-import {useIsConnected} from 'react-native-offline';
+import { useIsConnected } from 'react-native-offline';
 import Header from './Header';
 import colors from '../constants/colors';
 
 
 export default function ContentContainer(props) {
 
-  const [scrollCoords, setScrollCoords] = useState({x:"",y:""})
-  
+  const [scrollCoords, setScrollCoords] = useState({ x: "", y: "" })
+
   const isConnected = useIsConnected();
   // const isConnected = false
-  const {t, i18n} = props;
-const scrollViewElement = useRef(null)
+  const { t, i18n } = props;
+  const scrollViewElement = useRef(null)
   const [originName, setOriginName] = useState('zamalek cairo');
   const [destinationName, setDestinationName] = useState('gardencity cairo');
   const [center] = useState({
@@ -34,7 +34,7 @@ const scrollViewElement = useRef(null)
     longitude: '',
   });
   const [tripPrice, setTripPrice] = useState(0);
-  const [tripDuration, setTripDuration] = useState({hours: 0, minutes: 0});
+  const [tripDuration, setTripDuration] = useState({ hours: 0, minutes: 0 });
   const [tripDistance, setTripDistance] = useState(0);
   const [departureTime, setDepartureTime] = useState();
 
@@ -52,6 +52,7 @@ const scrollViewElement = useRef(null)
     const googleMapHelper = new GoogleMapHelper();
     setMapHelper(googleMapHelper);
   }, []);
+
   const onUnmount = React.useCallback(function callback(map) {
     setMapHelper(null);
   }, []);
@@ -73,7 +74,7 @@ const scrollViewElement = useRef(null)
 
     //convert trip time to hours and minutes
 
-    const {hours, minutes} = mapHelper.convertTime(durationInTrafficSeconds);
+    const { hours, minutes } = mapHelper.convertTime(durationInTrafficSeconds);
 
     //set trip distance in state
 
@@ -81,7 +82,7 @@ const scrollViewElement = useRef(null)
 
     //set trip duration in state
 
-    setTripDuration({hours, minutes});
+    setTripDuration({ hours, minutes });
 
     //set trip price in state
 
@@ -92,11 +93,11 @@ const scrollViewElement = useRef(null)
   }
 
   const handleSubmit = async () => {
-    
+
     setRouteNotFoundError(false);
     setOriginErrorMessage(false);
     setDestinationErrorMessage(false);
-    
+
 
     //get trip duration, distance, origin and destination formatted names using distance matrix service
     try {
@@ -125,20 +126,20 @@ const scrollViewElement = useRef(null)
           durationInTrafficSeconds,
         );
 
-        
-        const {_locationCoords: _originCoords, locationCountry: originCountry} =
+
+        const { _locationCoords: _originCoords, locationCountry: originCountry } =
           await mapHelper.geocodeLocation(originFormattedName);
 
         if (originCountry !== 'Egypt') {
           setOriginNotEgypt(true);
-          
+
         }
         setOriginCoords({
           isReady: true,
           latitude: _originCoords.lat,
           longitude: _originCoords.lng,
         });
-        
+
         const {
           _locationCoords: _destinationCoords,
           locationCountry: destinationCountry,
@@ -146,7 +147,7 @@ const scrollViewElement = useRef(null)
 
         if (destinationCountry !== 'Egypt') {
           setDestinationNotEgypt(true);
-          
+
         }
         setDestinationCoords({
           isReady: true,
@@ -172,7 +173,7 @@ const scrollViewElement = useRef(null)
         setShowTripInfo(false);
         setOriginErrorMessage(false);
         setDestinationErrorMessage(false);
-        
+
 
         // setDestinationName(destinationFormattedName);
         // setOriginName(originFormattedName);
@@ -211,7 +212,7 @@ const scrollViewElement = useRef(null)
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    
+
 
     const {
       distanceInMeters,
@@ -219,8 +220,8 @@ const scrollViewElement = useRef(null)
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(coords, destinationName);
-    
-    
+
+
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,
@@ -233,15 +234,15 @@ const scrollViewElement = useRef(null)
       e.nativeEvent.coordinate.latitude +
       ',' +
       e.nativeEvent.coordinate.longitude;
-    
+
     const {
       distanceInMeters,
       durationInTrafficSeconds,
       originFormattedName,
       destinationFormattedName,
     } = await mapHelper.getTripData(originName, coords);
-    
-    
+
+
     makeTripInfo(
       originFormattedName,
       destinationFormattedName,
@@ -250,21 +251,21 @@ const scrollViewElement = useRef(null)
     );
   };
   return (
-    <ScrollView ref = {scrollViewElement} 
-    onLayout={(event) => 
-      setScrollCoords({x:0,y:(event.nativeEvent.layout.y+event.nativeEvent.layout.height)})
+    <ScrollView ref={scrollViewElement}
+      onLayout={(event) =>
+        setScrollCoords({ x: 0, y: (event.nativeEvent.layout.y + event.nativeEvent.layout.height) })
       } >
-      <Header/>
-      
+      <Header />
 
-      <View style={{marginHorizontal: 10}}>
+
+      <View style={{ marginHorizontal: 10 }}>
         {!isConnected && (
-          <Text style={{color: colors.primary, padding: 8}}>
+          <Text style={{ color: colors.primary, padding: 8 }}>
             {t('container:loadMapError')}
           </Text>
         )}
 
-        <View style={{padding: 8}}>
+        <View style={{ padding: 8 }}>
           <Form
             handleSubmit={handleSubmit}
             originValue={originName}
@@ -283,8 +284,8 @@ const scrollViewElement = useRef(null)
             t={t}
           />
 
-          <View 
-          style={{flex: 1, flexDirection: 'column'}}>
+          <View
+            style={{ flex: 1, flexDirection: 'column' }}>
             <Gmap
               center={center}
               onLoad={onLoad}
@@ -296,8 +297,8 @@ const scrollViewElement = useRef(null)
               originName={originName}
               destinationName={destinationName}>
               {showTripInfo && (
-                <TripInfo                 
-                  t={t}                 
+                <TripInfo
+                  t={t}
                   tripPrice={tripPrice}
                   tripDistance={tripDistance}
                   tripDuration={tripDuration}

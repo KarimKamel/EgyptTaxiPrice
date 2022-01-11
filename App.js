@@ -1,23 +1,24 @@
-import React from 'react';
-import {useTranslation} from 'react-i18next';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import './utils/i18n';
-import {NetworkProvider} from 'react-native-offline';
+import { NetworkProvider } from 'react-native-offline';
 
 import ContentContainer from './components/ContentContainer';
-import SplashScreen from 'react-native-splash-screen';
+
+
 
 export default function App() {
-  const {t, i18n} = useTranslation();
-  // useEffect(() => {
-  //   SplashScreen.hide();
-  // }, []);
+  const { t, i18n } = useTranslation();
+
+
   return (
     <NetworkProvider>
+      {console.log("rendering")}
       <ContentContainer t={t} i18n={i18n} />
     </NetworkProvider>
-    
-      
-    
+
+
+
   );
 }
 
