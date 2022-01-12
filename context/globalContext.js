@@ -12,6 +12,8 @@ export const GlobalContextProvider = ({ children }) => {
     const isConnected = useIsConnected();
     const [originName, setOriginName] = useState('zamalek cairo');
     const [destinationName, setDestinationName] = useState('gardencity cairo');
+    const [tripDuration, setTripDuration] = useState({ hours: 0, minutes: 0 });
+    const [tripDistance, setTripDistance] = useState(0);
     const [originCoords, setOriginCoords] = useState({
         isReady: false,
         latitude: '',
@@ -22,6 +24,40 @@ export const GlobalContextProvider = ({ children }) => {
         latitude: '',
         longitude: '',
     });
+    const [tripPrice, setTripPrice] = useState(0);
+    const [showTripInfo, setShowTripInfo] = useState(true);
+    const [mapHelper, setMapHelper] = React.useState(null);
+
+    function makeTripInfo(
+        originFormattedName,
+        destinationFormattedName,
+        distanceInMeters,
+        durationInTrafficSeconds,
+    ) {
+        const _tripPrice = mapHelper.getPrice(
+            distanceInMeters,
+            durationInTrafficSeconds,
+        );
+
+        //convert trip time to hours and minutes
+
+        const { hours, minutes } = mapHelper.convertTime(durationInTrafficSeconds);
+
+        //set trip distance in state
+
+        setTripDistance(distanceInMeters / 1000);
+
+        //set trip duration in state
+
+        setTripDuration({ hours, minutes });
+
+        //set trip price in state
+
+        setTripPrice(_tripPrice);
+        setDestinationName(destinationFormattedName);
+        setOriginName(originFormattedName);
+        setShowTripInfo(true);
+    }
 
     return (
 
@@ -32,7 +68,11 @@ export const GlobalContextProvider = ({ children }) => {
             originName, setOriginName,
             destinationName, setDestinationName,
             originCoords, setOriginCoords,
-            destinationCoords, setDestinationCoords
+            destinationCoords, setDestinationCoords,
+            tripPrice, setTripPrice,
+            showTripInfo, setShowTripInfo, makeTripInfo,
+            tripDistance, tripDuration,
+            mapHelper, setMapHelper
         }}>
 
             {children}

@@ -22,7 +22,12 @@ export default function ContentContainer(props) {
     setOriginName,
     destinationName, setDestinationName,
     originCoords, setOriginCoords,
-    destinationCoords, setDestinationCoords
+    destinationCoords, setDestinationCoords,
+    tripPrice,
+    showTripInfo, setShowTripInfo, makeTripInfo,
+    tripDistance, tripDuration,
+    mapHelper, setMapHelper
+
   } = useContext(GlobalContext)
 
 
@@ -35,20 +40,19 @@ export default function ContentContainer(props) {
   }); //cairo
 
 
-  const [tripPrice, setTripPrice] = useState(0);
-  const [tripDuration, setTripDuration] = useState({ hours: 0, minutes: 0 });
-  const [tripDistance, setTripDistance] = useState(0);
+
+
   const [departureTime, setDepartureTime] = useState();
 
 
   const [originErrorMessage, setOriginErrorMessage] = useState(false);
   const [destinationErrorMessage, setDestinationErrorMessage] = useState(false);
   const [routeNotFoundError, setRouteNotFoundError] = useState(false);
-  const [showTripInfo, setShowTripInfo] = useState(true);
+
   const [originNotEgypt, setOriginNotEgypt] = useState(false);
   const [destinationNotEgypt, setDestinationNotEgypt] = useState(false);
 
-  const [mapHelper, setMapHelper] = React.useState(null);
+
 
   const onLoad = React.useCallback(function callback() {
     const googleMapHelper = new GoogleMapHelper();
@@ -62,37 +66,37 @@ export default function ContentContainer(props) {
   // fill in the fields that make up the trip info banner
   // show the trip info banner
 
-  function makeTripInfo(
-    originFormattedName,
-    destinationFormattedName,
+  // function makeTripInfo(
+  //   originFormattedName,
+  //   destinationFormattedName,
 
-    distanceInMeters,
-    durationInTrafficSeconds,
-  ) {
-    const _tripPrice = mapHelper.getPrice(
-      distanceInMeters,
-      durationInTrafficSeconds,
-    );
+  //   distanceInMeters,
+  //   durationInTrafficSeconds,
+  // ) {
+  //   const _tripPrice = mapHelper.getPrice(
+  //     distanceInMeters,
+  //     durationInTrafficSeconds,
+  //   );
 
-    //convert trip time to hours and minutes
+  //   //convert trip time to hours and minutes
 
-    const { hours, minutes } = mapHelper.convertTime(durationInTrafficSeconds);
+  //   const { hours, minutes } = mapHelper.convertTime(durationInTrafficSeconds);
 
-    //set trip distance in state
+  //   //set trip distance in state
 
-    setTripDistance(distanceInMeters / 1000);
+  //   setTripDistance(distanceInMeters / 1000);
 
-    //set trip duration in state
+  //   //set trip duration in state
 
-    setTripDuration({ hours, minutes });
+  //   setTripDuration({ hours, minutes });
 
-    //set trip price in state
+  //   //set trip price in state
 
-    setTripPrice(_tripPrice);
-    setDestinationName(destinationFormattedName);
-    setOriginName(originFormattedName);
-    setShowTripInfo(true);
-  }
+  //   setTripPrice(_tripPrice);
+  //   setDestinationName(destinationFormattedName);
+  //   setOriginName(originFormattedName);
+  //   setShowTripInfo(true);
+  // }
 
   const handleSubmit = async () => {
 
