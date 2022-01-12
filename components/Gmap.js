@@ -1,46 +1,41 @@
-import React, {useEffect, useRef} from 'react';
-
-import {View,  StyleSheet, } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
-
-
-
-
-
-// import { GoogleMap, Marker } from "@react-google-maps/api";
-
+import React, { useEffect, useRef, useContext } from 'react';
+import { GlobalContext } from '../context/globalContext';
+import { View, StyleSheet, } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 
 export default function Gmap(props) {
   const {
-    center,
-    onLoad,
-    
-    originPosition,
-    destinationPosition,
-    
-    onOriginDragEnd,
-    onDestinationDragEnd,
     originName,
     destinationName,
+  } = useContext(GlobalContext)
+
+  const {
+    center,
+    onLoad,
+    originPosition,
+    destinationPosition,
+    onOriginDragEnd,
+    onDestinationDragEnd,
+
   } = props;
   const mapRefContainer = useRef(null);
   useEffect(() => {
     // const mapView = new MapView();
-    
-    if (mapRefContainer.current.fitToSuppliedMarkers){ 
-      
+
+    if (mapRefContainer.current.fitToSuppliedMarkers) {
+
       mapRefContainer.current.fitToSuppliedMarkers(['origin', 'destination'], {
-      edgePadding: {
-        top: 150,
-        right: 50,
-        bottom: 150,
-        left: 50,
-      },
+        edgePadding: {
+          top: 150,
+          right: 50,
+          bottom: 150,
+          left: 50,
+        },
+      }
+      )
     }
-    )
-  }
-   
+
   }, [originPosition, destinationPosition]);
   return (
     // < className="col-12 col-md-8 col-lg-6 col-xl-6 text-left px-lg-4">
@@ -57,13 +52,13 @@ export default function Gmap(props) {
           zoom: 10,
           altitude: 50,
         }}
-        // camera={{
-        //   center: center,
-        //   heading: 10,
-        //   pitch: 10,
-        //   zoom: 10,
-        //   altitude: 50,
-        // }}
+      // camera={{
+      //   center: center,
+      //   heading: 10,
+      //   pitch: 10,
+      //   zoom: 10,
+      //   altitude: 50,
+      // }}
       >
         {originPosition.isReady && (
           <Marker
@@ -97,7 +92,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // height:300,
     // width:"auto",
-    display:"flex",
+    display: "flex",
     // backgroundColor: '#fff',
     // alignItems: 'center',
     // justifyContent: 'center',

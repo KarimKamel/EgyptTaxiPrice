@@ -1,31 +1,35 @@
-import React, {useState} from 'react';
+import React, { useState, useContext } from 'react';
+import { GlobalContext } from '../context/globalContext';
 import colors from "../constants/colors"
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const bootstrapStyleSheet = new BootstrapStyleSheet();
-const {s, c} = bootstrapStyleSheet;
+const { s, c } = bootstrapStyleSheet;
 
 
 
 export default function Form(props) {
+  const {
+    t,
+    i18n,
+    setOriginName, setDestinationName,
+  } = useContext(GlobalContext)
+
+
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [originIsEmpty, setOriginIsEmpty] = useState(false);
   const [destinationIsEmpty, setdestinationIsEmpty] = useState(false);
   const [departureTimeError, setDepartureTimeError] = useState(false);
   const {
-    setDestinationName,
     setDepartureTime,
-    setOriginName,
     handleSubmit,
     originValue,
     destinationValue,
     destinationError,
     originError,
     routeNotFoundError,
-    i18n,
-    t,
     originNotEgypt,
     destinationNotEgypt,
   } = props;
@@ -45,12 +49,14 @@ export default function Form(props) {
   };
 
   function getAlignment() {
-    return  i18n.language === 'ar' &&styles.textAlignRight};
+    return i18n.language === 'ar' && styles.textAlignRight
+  };
 
   function getFlexDirection() {
-    return  i18n.language === 'ar' &&styles.flexDirectionReverse};
-    // return {textAlign: 'left'};
-  
+    return i18n.language === 'ar' && styles.flexDirectionReverse
+  };
+  // return {textAlign: 'left'};
+
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -62,13 +68,13 @@ export default function Form(props) {
 
   const handleConfirm = date => {
     const currentDate = new Date();
-    
+
     if (date >= new Date()) {
-      
+
       setDepartureTimeError(false);
       setDepartureTime(date);
     } else {
-      
+
       setDepartureTimeError(true);
     }
 
@@ -78,15 +84,15 @@ export default function Form(props) {
   return (
     // <View style={{paddingLeft: 20, paddingRight: 20}}>
     <View>
-      
-      <Text style={{fontSize: 18}}>
+
+      <Text style={{ fontSize: 18 }}>
         {t('form:subtitle')}
       </Text>
 
-      <Text style={[s.formLabelText, {marginTop: 8}]}>{t('form:from')}</Text>
+      <Text style={[s.formLabelText, { marginTop: 8 }]}>{t('form:from')}</Text>
 
       <TextInput
-        style={[s.formControl,getAlignment()]}
+        style={[s.formControl, getAlignment()]}
         id="originInput"
         type="text"
         onChangeText={text => setOriginName(text)}
@@ -96,26 +102,26 @@ export default function Form(props) {
         placeholder={t('form:origin')}
       />
       {originIsEmpty && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:locationEmpty')}
         </Text>
       )}
-     
-     
+
+
 
       {originError && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:searchErrorMessage')}
         </Text>
       )}
       {originNotEgypt && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:locationNotEgypt')}
         </Text>
       )}
 
       <Text
-        style={[s.formLabelText, {marginTop: 8}]}
+        style={[s.formLabelText, { marginTop: 8 }]}
         // style={getAlignment()}
         htmlFor="destinationInput">
         {t('form:to')}
@@ -130,22 +136,22 @@ export default function Form(props) {
         placeholder={t('form:destination')}
       />
       {destinationIsEmpty && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:locationEmpty')}
         </Text>
       )}
       {destinationError && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:searchErrorMessage')}
         </Text>
       )}
       {destinationNotEgypt && (
-        <Text style={{color: colors.errorRed}}>
+        <Text style={{ color: colors.errorRed }}>
           {t('form:locationNotEgypt')}
         </Text>
       )}
 
-      <Text style={[s.formLabelText, {marginTop: 8}]}>
+      <Text style={[s.formLabelText, { marginTop: 8 }]}>
         {t('form:departure time')}
       </Text>
 
@@ -157,14 +163,14 @@ export default function Form(props) {
             flexDirection: 'row',
             marginTop: 16,
             marginBottom: 16,
-          },getFlexDirection()
+          }, getFlexDirection()
         ]}>
-    
-        <View style={{flex: 1}}>
+
+        <View style={{ flex: 1 }}>
           <Button
             title={t('form:pickDate')}
             onPress={showDatePicker}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
           />
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
@@ -173,23 +179,23 @@ export default function Form(props) {
             onCancel={hideDatePicker}
           />
         </View>
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <Button
             title={t('form:submit')}
             color={colors.primary}
             onPress={() => verifySubmit()}
-            
+
             type="submit"></Button>
         </View>
 
       </View>
 
-      <View style={[s.col4, s.colMd4, {marginLeft: 0, padding: 0}]}>
+      <View style={[s.col4, s.colMd4, { marginLeft: 0, padding: 0 }]}>
         {routeNotFoundError && (
-          <Text style={{color: colors.errorRed}}>{t('form:routeErrorMessage')}</Text>
+          <Text style={{ color: colors.errorRed }}>{t('form:routeErrorMessage')}</Text>
         )}
         {departureTimeError && (
-          <Text style={{color: colors.errorRed, ...getAlignment()}}>
+          <Text style={{ color: colors.errorRed, ...getAlignment() }}>
             {t('form:departureTimeErrorMessage')}
           </Text>
         )}
@@ -199,11 +205,11 @@ export default function Form(props) {
   );
 }
 const styles = StyleSheet.create({
-  
-  textAlignRight:{
-    textAlign:"right"
+
+  textAlignRight: {
+    textAlign: "right"
   },
-  flexDirectionReverse:{
-    flexDirection:"row-reverse"
+  flexDirectionReverse: {
+    flexDirection: "row-reverse"
   }
 })

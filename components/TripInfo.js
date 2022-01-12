@@ -1,41 +1,48 @@
-import React from 'react';
-import {View, Text} from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text } from 'react-native';
 import colors from "../constants/colors"
+import { GlobalContext } from '../context/globalContext';
 
-const  TripInfo =(props) => {
-  const {tripDuration, tripDistance, tripPrice, t,} = props;
+const TripInfo = (props) => {
+
+  const {
+
+    t,
+
+  } = useContext(GlobalContext)
+  const { tripDuration, tripDistance, tripPrice } = props;
   return (
-    <View 
-       style = {{paddingTop:10}} >
+    <View
+      style={{ paddingTop: 10 }} >
       {tripDistance !== 0 && (
-        <View style={{ padding:5,backgroundColor:colors.lightBackground}}>
-         <Text style={{color:colors.primary}}> 
-        
+        <View style={{ padding: 5, backgroundColor: colors.lightBackground }}>
+          <Text style={{ color: colors.primary }}>
+
             {t('tripinfo:duration')}
             <Text>
               {`${tripDuration.hours}`} {t('tripinfo:hours')}{' '}
               {`${tripDuration.minutes}`}
               {t('tripinfo:minutes')}
             </Text>
-          {"\n"}
-         
+            {"\n"}
+
             {t('tripinfo:distance')}{' '}
             <Text>
               {`${tripDistance}`} {t('tripinfo:kilometer')}
             </Text>
-          {"\n"}
-          
+            {"\n"}
+
             {t('tripinfo:price')} <Text>{`${tripPrice}`}</Text>{' '}
             {t('tripinfo:money')}
           </Text>
-          
+
         </View>
       )}
     </View>)
 }
-  
-    
-  
-  
-  export default TripInfo
+
+
+
+
+export default TripInfo
 

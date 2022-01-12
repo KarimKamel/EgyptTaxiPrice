@@ -14,27 +14,27 @@ export default function ContentContainer(props) {
 
   const {
     isConnected,
-    setScrollCoords, scrollCoords, t, i18n
+    setScrollCoords,
+    scrollCoords,
+    t,
+    i18n,
+    originName,
+    setOriginName,
+    destinationName, setDestinationName,
+    originCoords, setOriginCoords,
+    destinationCoords, setDestinationCoords
   } = useContext(GlobalContext)
 
 
   const scrollViewElement = useRef(null)
-  const [originName, setOriginName] = useState('zamalek cairo');
-  const [destinationName, setDestinationName] = useState('gardencity cairo');
+  // const [originName, setOriginName] = useState('zamalek cairo');
+  // const [destinationName, setDestinationName] = useState('gardencity cairo');
   const [center] = useState({
     latitude: 30.0609422,
     longitude: 31.219709,
   }); //cairo
-  const [originCoords, setOriginCoords] = useState({
-    isReady: false,
-    latitude: '',
-    longitude: '',
-  });
-  const [destinationCoords, setDestinationCoords] = useState({
-    isReady: false,
-    latitude: '',
-    longitude: '',
-  });
+
+
   const [tripPrice, setTripPrice] = useState(0);
   const [tripDuration, setTripDuration] = useState({ hours: 0, minutes: 0 });
   const [tripDistance, setTripDistance] = useState(0);
