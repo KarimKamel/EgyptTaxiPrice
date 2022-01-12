@@ -1,24 +1,35 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState } from 'react';
 import { GlobalContext } from '../context/globalContext';
 import { View, StyleSheet, } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import GoogleMapHelper from '../utils/GoogleMapHelperClass';
 
 
-export default function Gmap(props) {
+export default function Gmap({ children }) {
+  const [center] = useState({
+    latitude: 30.0609422,
+    longitude: 31.219709,
+  }); //cairo
+
+  const onLoad = React.useCallback(function callback() {
+    const googleMapHelper = new GoogleMapHelper();
+    setMapHelper(googleMapHelper);
+  }, []);
+
+  const onUnmount = React.useCallback(function callback() {
+    setMapHelper(null);
+  }, []);
   const {
     originName,
     destinationName,
+    setMapHelper,
+    onOriginDragEnd, onDestinationDragEnd,
+    originCoords,
+    destinationCoords,
+
   } = useContext(GlobalContext)
 
-  const {
-    center,
-    onLoad,
-    originPosition,
-    destinationPosition,
-    onOriginDragEnd,
-    onDestinationDragEnd,
 
-  } = props;
   const mapRefContainer = useRef(null);
   useEffect(() => {
     // const mapView = new MapView();
@@ -36,9 +47,9 @@ export default function Gmap(props) {
       )
     }
 
-  }, [originPosition, destinationPosition]);
+  }, [originCoords, destinationCoords]);
   return (
-    // < className="col-12 col-md-8 col-lg-6 col-xl-6 text-left px-lg-4">
+
 
     <View style={styles.container}>
       <MapView
@@ -52,57 +63,44 @@ export default function Gmap(props) {
           zoom: 10,
           altitude: 50,
         }}
-      // camera={{
-      //   center: center,
-      //   heading: 10,
-      //   pitch: 10,
-      //   zoom: 10,
-      //   altitude: 50,
-      // }}
+
       >
-        {originPosition.isReady && (
+        {originCoords.isReady && (
           <Marker
             draggable={true}
             identifier={'origin'}
-            coordinate={originPosition}
+            coordinate={originCoords}
             onDragEnd={onOriginDragEnd}
             title={'origin'}
             description={originName}
           />
         )}
 
-        {destinationPosition.isReady && (
+        {destinationCoords.isReady && (
           <Marker
             draggable={true}
             identifier={'destination'}
-            coordinate={destinationPosition}
+            coordinate={destinationCoords}
             title={'destination'}
             onDragEnd={onDestinationDragEnd}
             description={destinationName}
           />
         )}
       </MapView>
-      {props.children}
+      {children}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // height:300,
-    // width:"auto",
+
     display: "flex",
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
+
   },
   map: {
-    // flex: 2,
-    // width: 'auto',
+
     height: 400,
-    // display: 'flex',
-    // width: Dimensions.get("window").width,
-    // height: Dimensions.get("window").height,
+
   },
 });

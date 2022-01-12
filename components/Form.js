@@ -10,11 +10,22 @@ const { s, c } = bootstrapStyleSheet;
 
 
 
-export default function Form(props) {
+export default function Form() {
   const {
     t,
     i18n,
-    setOriginName, setDestinationName,
+    setOriginName,
+    originName,
+    destinationName, setDestinationName,
+    setDepartureTime,
+    routeNotFoundError,
+    originNotEgypt,
+    destinationNotEgypt,
+    handleSubmit,
+    originErrorMessage,
+    destinationErrorMessage
+
+
   } = useContext(GlobalContext)
 
 
@@ -22,26 +33,16 @@ export default function Form(props) {
   const [originIsEmpty, setOriginIsEmpty] = useState(false);
   const [destinationIsEmpty, setdestinationIsEmpty] = useState(false);
   const [departureTimeError, setDepartureTimeError] = useState(false);
-  const {
-    setDepartureTime,
-    handleSubmit,
-    originValue,
-    destinationValue,
-    destinationError,
-    originError,
-    routeNotFoundError,
-    originNotEgypt,
-    destinationNotEgypt,
-  } = props;
+
 
   const verifySubmit = () => {
-    if (originValue.length === 0) {
+    if (originName.length === 0) {
       setOriginIsEmpty(true);
     }
-    if (destinationValue.length === 0) {
+    if (destinationName.length === 0) {
       setdestinationIsEmpty(true);
     }
-    if (destinationValue.length > 0 && originValue.length > 0) {
+    if (destinationName.length > 0 && originName.length > 0) {
       setdestinationIsEmpty(false);
       setOriginIsEmpty(false);
       handleSubmit();
@@ -98,7 +99,7 @@ export default function Form(props) {
         onChangeText={text => setOriginName(text)}
         // onChangeText={e => handleTextInput(e)}
         className="form-control"
-        value={originValue}
+        value={originName}
         placeholder={t('form:origin')}
       />
       {originIsEmpty && (
@@ -109,7 +110,7 @@ export default function Form(props) {
 
 
 
-      {originError && (
+      {originErrorMessage && (
         <Text style={{ color: colors.errorRed }}>
           {t('form:searchErrorMessage')}
         </Text>
@@ -132,7 +133,7 @@ export default function Form(props) {
         id="destinationInput"
         type="text"
         onChangeText={setDestinationName}
-        value={destinationValue}
+        value={destinationName}
         placeholder={t('form:destination')}
       />
       {destinationIsEmpty && (
@@ -140,7 +141,7 @@ export default function Form(props) {
           {t('form:locationEmpty')}
         </Text>
       )}
-      {destinationError && (
+      {destinationErrorMessage && (
         <Text style={{ color: colors.errorRed }}>
           {t('form:searchErrorMessage')}
         </Text>

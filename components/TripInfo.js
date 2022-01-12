@@ -3,14 +3,10 @@ import { View, Text } from 'react-native';
 import colors from "../constants/colors"
 import { GlobalContext } from '../context/globalContext';
 
-const TripInfo = (props) => {
+const TripInfo = () => {
 
-  const {
+  const { t, tripDuration, tripDistance, tripPrice } = useContext(GlobalContext)
 
-    t,
-
-  } = useContext(GlobalContext)
-  const { tripDuration, tripDistance, tripPrice } = props;
   return (
     <View
       style={{ paddingTop: 10 }} >
