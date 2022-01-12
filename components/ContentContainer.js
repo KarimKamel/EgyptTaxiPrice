@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import Form from './Form';
 import Gmap from './Gmap';
@@ -7,15 +7,17 @@ import GoogleMapHelper from '../utils/GoogleMapHelperClass';
 import { useIsConnected } from 'react-native-offline';
 import Header from './Header';
 import colors from '../constants/colors';
+import { GlobalContext, GlobalContextProvider } from '../context/globalContext';
 
 
 export default function ContentContainer(props) {
 
-  const [scrollCoords, setScrollCoords] = useState({ x: "", y: "" })
+  const {
+    isConnected,
+    setScrollCoords, scrollCoords, t, i18n
+  } = useContext(GlobalContext)
 
-  const isConnected = useIsConnected();
-  // const isConnected = false
-  const { t, i18n } = props;
+
   const scrollViewElement = useRef(null)
   const [originName, setOriginName] = useState('zamalek cairo');
   const [destinationName, setDestinationName] = useState('gardencity cairo');
