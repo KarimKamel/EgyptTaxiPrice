@@ -50,13 +50,20 @@ export default function Form() {
   };
 
   function getAlignment() {
-    return i18n.language === 'ar' && styles.textAlignRight
+    // changes text direction when set to arabic
+    if (i18n.language === 'ar')
+      return styles.textAlignRight
+
   };
 
   function getFlexDirection() {
-    return i18n.language === 'ar' && styles.flexDirectionReverse
+    //reverses order of buttons in form when set to arabic
+    if (i18n.language === 'ar')
+      return styles.flexDirectionReverse
+
+
   };
-  // return {textAlign: 'left'};
+
 
 
   const showDatePicker = () => {
@@ -85,6 +92,7 @@ export default function Form() {
   return (
     // <View style={{paddingLeft: 20, paddingRight: 20}}>
     <View>
+
 
       <Text style={{ fontSize: 18 }}>
         {t('form:subtitle')}
